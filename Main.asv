@@ -1,0 +1,55 @@
+%该实验是在Run_Experiment_BCSSPL_SDPC.m上的改进，Run_Experiment_BCSSPL_SDPC.m
+%测试了SQ, DPCM+SQ, SDPC+SQ三个实验
+%Main.m在此基础上新添两个实验SDPC8 + SQ(在当前图像块的8个领域寻找最佳预测块)
+%SDPC16 + SQ(在当前图像块的16个领域寻找最佳预测块)
+
+cur = cd;
+addpath(genpath(cur));
+for imageIndex = 1 : 3
+    for ImaNo = imageIndex %选择不同的图片，可以自己添加
+    switch ImaNo
+        case 1
+            filename = 'lenna';
+        case 2
+            filename = 'peppers';
+        case 3
+            filename = 'clown';
+    end
+    
+    original_image = double(imread([filename '.pgm']));
+    [num_rows, num_cols] = size(original_image);
+    current_image = original_image;
+    
+    num_levels = 5;
+    block_size = 8; %将图像分块的大小，可以自己调节成其他值（4，8，16，32）
+    algorithm = 'bcsspl'; %SPL重构方法
+    
+    [psnr_spl, rate_spl, coef_spl] = SPL_adapt(filename, current_image, num_levels, block_size, algorithm);
+    [psnr_sq, rate_sq] = SQ(filename, current_image, num_levels, block_size, algorithm);
+    [psnr_dpcm, rate_dpcm] = DPCM(filename, current_image, num_levels, block_size, algorithm);
+    [psnr_mfpq, rate_mfpq] = MFPQ(filename, current_image, num_levels, block_size, algorithm);
+    [psnr_sdpc, rate_sdpc] = SDPC(filename, current_image, num_levels, block_size, algorithm);
+    [psnr_sdpc_ch8, rate_sdpc_ch8] = SDPC_ch8(filename, current_image, num_levels, block_size, algorithm);
+    [psnr_sdpc_ch16, rate_sdpc_ch16] = SDPC_ch16(filename, current_image, num_levels, block_size, algorithm);
+    
+    
+    
+    figure;
+    clf;
+    plot(rate_sdpc, psnr_sdpc, 'r-x', 'LineWidth', 2); %红色
+    hold on
+    plot(rate_dpcm, psnr_dpcm, 'k-x', 'LineWidth', 2); %黑色
+    hold on
+    plot(rate_mfpq, psnr_mfpq, 'b-x', 'LineWidth', 2); %蓝色
+    hold on
+    plot(rate_sdpc_ch8, psnr_sdpc_ch8, 'g-x', 'LineWidth', 1);  %绿色
+    hold on
+    plot(rate_sdpc_ch16, psnr_sdpc_ch16, 'y-x', 'LineWidth', 1);  %黑色
+    grid on
+    title(filename);
+    xlabel('Bitrate (bpp)');
+    ylabel('PSNR (dB)');
+    
+    legend('BCS-SPL+SDPC','BCS-SPL+DPCM', 'BCS-SPL+MFPQ', 'BCS-SPL+SDPC_ch8','BCS-SPL+SDPC_ch16','Location', 'SouthEast');
+    end
+end

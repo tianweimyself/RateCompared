@@ -49,7 +49,7 @@
 %
 	
 function reconstructed_image = ...
-    BCS_SPL_DDWT_Decoder(y, Phi, num_rows, num_cols, num_levels, max_iterations)
+    BCS_SPL_DDWT_Decoder_col(y, Phi, num_rows, num_cols, num_levels, max_iterations)
 
 lambda = 25;
 
@@ -81,8 +81,7 @@ if (max_iterations > 1)
       lambda, num_levels, 'last');
 end
 
-reconstructed_image = col2im(x, [block_size block_size], ...
-    [num_rows num_cols], 'distict');
+reconstructed_image = x;
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

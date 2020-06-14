@@ -2,7 +2,7 @@
 %测试了SQ, DPCM+SQ, SDPC+SQ三个实验
 %Main.m在此基础上新添两个实验SDPC8 + SQ(在当前图像块的8个领域寻找最佳预测块)
 %SDPC16 + SQ(在当前图像块的16个领域寻找最佳预测块)
-
+clear;
 cur = cd;
 addpath(genpath(cur));
 for imageIndex = 1 : 3
